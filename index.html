@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্মার্ট হিসাব খাতা | Smart Expense Tracker</title>
+    
+    <!-- গুগল ফন্ট: Hind Siliguri (বাংলার জন্য) এবং Poppins (সংখ্যার জন্য) -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- ফন্ট অসাম আইকন (FontAwesome) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+            --border-light: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* মূল কন্টেইনার ডিজাইন */
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 420px;
+            padding: 30px 25px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .header-title {
+            text-align: center;
+            color: var(--text-dark);
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header-title i {
+            color: var(--primary);
+        }
+
+        /* ব্যালেন্স কার্ড */
+        .balance-card {
+            background: linear-gradient(135deg, #4f46e5, #3b82f6);
+            color: white;
+            padding: 25px 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            transform: rotate(45deg);
+        }
+
+        .balance-card h4 {
+            font-size: 15px;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        .balance-card h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            position: relative;
+        }
+
+        /* আয় ও ব্যয় বক্স */
+        .inc-exp-container {
+            display: flex;
+            justify-content: space-between;
+            background: white;
+            padding: 15px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            margin-bottom: 25px;
+            border: 1px solid var(--border-light);
+        }
+
+        .inc-exp-container div {
+            flex: 1;
+            text-align: center;
+        }
+
+        .inc-exp-container div:first-of-type {
+            border-right: 1px solid var(--border-light);
+        }
+
+        .inc-exp-container h4 {
+            font-size: 14px;
+            color: var(--text-gray);
+            margin-bottom: 5px;
+        }
+
+        .money {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .money.plus { color: var(--success); }
+        .money.minus { color: var(--danger); }
+
+        h3 {
+            font-size: 16px;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        /* ইনপুট ফর্ম ডিজাইন */
+        .form-control {
+            margin-bottom: 15px;
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: 'Hind Siliguri', sans-serif;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+            color: var(--text-dark);
+        }
+
+        input::placeholder { color: #94a3b8; }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        /* বাটন ডিজাইন */
+        .btn {
+            cursor: pointer;
+            background: var(--primary);
+            color: #fff;
+            border: 0;
+            display: block;
+            font-size: 16px;
+            font-family: 'Hind Siliguri', sans-serif;
+            font-weight: 600;
+            margin: 20px 0 30px;
+            padding: 15px;
+            width: 100%;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.35);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* লেনদেন তালিকা */
+        .list {
+            list-style-type: none;
+            max-height: 240px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* কাস্টম স্ক্রলবার */
+        .list::-webkit-scrollbar { width: 6px; }
+        .list::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        .list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .list::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .list li {
+            background-color: #fff;
+            color: var(--text-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            margin: 10px 0;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            font-weight: 500;
+            transition: transform 0.2s;
+        }
+
+        .list li:hover {
+            transform: scale(1.02);
+        }
+
+        /* আয়ের জন্য সবুজ, ব্যয়ের জন্য লাল বর্ডার */
+        .list li.plus { border-left: 5px solid var(--success); }
+        .list li.minus { border-left: 5px solid var(--danger); }
+
+        .transaction-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .transaction-amount {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .transaction-amount span {
+            min-width: 70px;
+            text-align: right;
+        }
+
+        /* ডিলিট বাটন (মোবাইল ফ্রেন্ডলি) */
+        .delete-btn {
+            cursor: pointer;
+            background-color: transparent;
+            color: #cbd5e1;
+            border: 0;
+            font-size: 18px;
+            padding: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            color: var(--danger);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-title">
+            <i class="fa-solid fa-wallet"></i> স্মার্ট হিসাব খাতা
+        </div>
+
+        <div class="balance-card">
+            <h4><i class="fa-solid fa-bangladeshi-taka-sign"></i> বর্তমান ব্যালেন্স</h4>
+            <h1 id="balance">0 ৳</h1>
+        </div>
+
+        <div class="inc-exp-container">
+            <div>
+                <h4><i class="fa-solid fa-arrow-trend-up" style="color: var(--success)"></i> মোট আয়</h4>
+                <p id="money-plus" class="money plus">+0 ৳</p>
+            </div>
+            <div>
+                <h4><i class="fa-solid fa-arrow-trend-down" style="color: var(--danger)"></i> মোট ব্যয়</h4>
+                <p id="money-minus" class="money minus">-0 ৳</p>
+            </div>
+        </div>
+
+        <h3><i class="fa-solid fa-pen-to-square"></i> নতুন লেনদেন যোগ করুন</h3>
+        <form id="form">
+            <div class="form-control">
+                <input type="text" id="text" placeholder="বিবরণ (যেমন: বেতন, মোবাইল রিচার্জ)" autocomplete="off">
+            </div>
+            <div class="form-control">
+                <input type="number" id="amount" placeholder="টাকার পরিমাণ (৳)">
+            </div>
+            <div class="form-control">
+                <select id="transactionType">
+                    <option value="income">আয় (Income +)</option>
+                    <option value="expense">ব্যয় (Expense -)</option>
+                </select>
+            </div>
+            <button class="btn">হিসাব যুক্ত করুন <i class="fa-solid fa-plus"></i></button>
+        </form>
+
+        <h3><i class="fa-solid fa-list-check"></i> লেনদেনের তালিকা</h3>
+        <ul id="list" class="list">
+            <!-- ডাইনামিক লিস্ট এখানে আসবে -->
+        </ul>
+    </div>
+
+    <script>
+        const balance = document.getElementById('balance');
+        const money_plus = document.getElementById('money-plus');
+        const money_minus = document.getElementById('money-minus');
+        const list = document.getElementById('list');
+        const form = document.getElementById('form');
+        const text = document.getElementById('text');
+        const amount = document.getElementById('amount');
+        const transactionType = document.getElementById('transactionType');
+
+        const localStorageTransactions = JSON.parse(localStorage.getItem('transactions'));
+        let transactions = localStorage.getItem('transactions') !== null ? localStorageTransactions : [];
+
+        function addTransaction(e) {
+            e.preventDefault();
+
+            if (text.value.trim() === '' || amount.value.trim() === '') {
+                alert('দয়া করে সঠিক বিবরণ এবং টাকার পরিমাণ দিন!');
+                return;
+            }
+
+            const transaction = {
+                id: generateID(),
+                text: text.value,
+                amount: transactionType.value === 'income' ? +amount.value : -amount.value
+            };
+
+            transactions.push(transaction);
+            addTransactionDOM(transaction);
+            updateValues();
+            updateLocalStorage();
+
+            text.value = '';
+            amount.value = '';
+        }
+
+        function generateID() {
+            return Math.floor(Math.random() * 100000000);
+        }
+
+        function addTransactionDOM(transaction) {
+            const sign = transaction.amount < 0 ? '-' : '+';
+            const item = document.createElement('li');
+
+            item.classList.add(transaction.amount < 0 ? 'minus' : 'plus');
+
+            item.innerHTML = `
+                <div class="transaction-info">
+                    <span>${transaction.text}</span>
+                </div>
+                <div class="transaction-amount">
+                    <span class="${transaction.amount < 0 ? 'minus' : 'plus'}">${sign}${Math.abs(transaction.amount)} ৳</span>
+                    <button class="delete-btn" onclick="removeTransaction(${transaction.id})" title="ডিলিট করুন">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            `;
+
+            list.appendChild(item);
+        }
+
+        function updateValues() {
+            const amounts = transactions.map(transaction => transaction.amount);
+
+            const total = amounts.reduce((acc, item) => (acc += item), 0).toFixed(2);
+            const income = amounts.filter(item => item > 0).reduce((acc, item) => (acc += item), 0).toFixed(2);
+            const expense = (amounts.filter(item => item < 0).reduce((acc, item) => (acc += item), 0) * -1).toFixed(2);
+
+            // সংখ্যার কমা ফরম্যাটিং (ভারতীয়/বাংলাদেশি স্টাইল)
+            balance.innerText = `${Number(total).toLocaleString('en-IN')} ৳`;
+            money_plus.innerText = `+${Number(income).toLocaleString('en-IN')} ৳`;
+            money_minus.innerText = `-${Number(expense).toLocaleString('en-IN')} ৳`;
+        }
+
+        function removeTransaction(id) {
+            transactions = transactions.filter(transaction => transaction.id !== id);
+            updateLocalStorage();
+            init();
+        }
+
+        function updateLocalStorage() {
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+        }
+
+        function init() {
+            list.innerHTML = '';
+            transactions.forEach(addTransactionDOM);
+            updateValues();
+        }
+
+        init();
+        form.addEventListener('submit', addTransaction);
+    </script>
+</body>
+</html>
